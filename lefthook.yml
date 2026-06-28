@@ -1,0 +1,15 @@
+# Local Git hooks mirroring the CI gates (ADR-012). Install with `lefthook install`.
+pre-commit:
+  parallel: true
+  commands:
+    structure:
+      run: ./scripts/check-structure.sh
+    catalog-lint:
+      run: ./scripts/lint-catalogs.sh
+    secrets:
+      run: ./scripts/no-secrets.sh
+    docs:
+      glob: "{README.md}"
+      run: ./scripts/check-docs.sh
+    action-pins:
+      run: ./scripts/check-action-pins.sh
