@@ -1,0 +1,3 @@
+# Placeholder so the empty "dora" family directory is versioned.
+# Catalog content (framework.yaml, controls/, rules/, mappings/) is delivered
+# by a later ticket (MAT-84). See frameworks/README.md.
