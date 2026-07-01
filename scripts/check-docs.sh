@@ -28,6 +28,11 @@ if grep -qE '^#[[:space:]]+Framework catalogs' "$README"; then
     "frameworks/gdpr-eprivacy/versions/2016/mappings/consent.tracker.prior-consent/mapping.yaml"
   )
 
+  if ! grep -qiE '^##[[:space:]]+Adding a framework family' "$README"; then
+    echo "instructions for adding a new framework are missing"
+    fail=1
+  fi
+
   for path in "${required_catalog_paths[@]}"; do
     if ! grep -Fq -- "$path" "$README"; then
       echo "${path#frameworks/gdpr-eprivacy/versions/2016/} is missing from the documented layout"
