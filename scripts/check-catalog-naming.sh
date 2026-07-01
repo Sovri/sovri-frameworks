@@ -2,17 +2,18 @@
 set -euo pipefail
 
 ROOT="${1:-frameworks}"
+CONTROL_FILENAME="control.yaml"
 fail=0
 
 if ! command -v python3 >/dev/null 2>&1 || ! python3 -c "import yaml" >/dev/null 2>&1; then
-  echo "ERROR: Python PyYAML is required for catalog naming check"
+  echo "ERROR: Python PyYAML is required for catalog naming check. Install it with: pip install pyyaml"
   exit 1
 fi
 
 ROOT_ABS="$(cd "$ROOT" && pwd)"
 ROOT_NAME="$(basename "$ROOT_ABS")"
 
-mapfile -t control_files < <(find "$ROOT" -path '*/controls/*/control.yaml' -type f | sort)
+mapfile -t control_files < <(find "$ROOT" -path "*/controls/*/$CONTROL_FILENAME" -type f | sort)
 if [ "${#control_files[@]}" -eq 0 ]; then
   echo "catalog naming OK (no control files yet)"
   exit 0
@@ -37,8 +38,18 @@ with open(sys.argv[1], encoding="utf-8") as handle:
 if not isinstance(data, dict):
     raise SystemExit("control metadata must be a mapping")
 
-print(data.get("id", ""))
-for reference in data.get("framework_references") or []:
+control_id = data.get("id", "")
+if control_id and not isinstance(control_id, str):
+    raise SystemExit("control id must be a string")
+
+framework_references = data.get("framework_references") or []
+if not isinstance(framework_references, list) or any(
+    not isinstance(reference, str) for reference in framework_references
+):
+    raise SystemExit("framework_references must be a list of strings")
+
+print(control_id)
+for reference in framework_references:
     print(reference)
 PY
   )" || {
