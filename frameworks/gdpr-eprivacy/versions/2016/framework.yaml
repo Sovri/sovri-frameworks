@@ -1,0 +1,8 @@
+id: gdpr-eprivacy
+name: GDPR and ePrivacy
+version: "2016"
+jurisdiction: EU
+scope: Project websites that process personal data and use trackers.
+source:
+  url: https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  description: General Data Protection Regulation official text

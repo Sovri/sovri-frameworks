@@ -1,0 +1,7 @@
+id: internal
+name: Internal control catalog
+version: "2026"
+jurisdiction: Organization
+scope: Organization-owned control families and policy baselines.
+source:
+  description: Sovri internal framework placeholder metadata

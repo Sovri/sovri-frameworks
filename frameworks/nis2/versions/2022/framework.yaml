@@ -1,0 +1,8 @@
+id: nis2
+name: NIS2 Directive
+version: "2022"
+jurisdiction: EU
+scope: Cybersecurity risk-management measures for essential and important entities.
+source:
+  url: https://eur-lex.europa.eu/eli/dir/2022/2555/oj
+  description: NIS2 Directive official text

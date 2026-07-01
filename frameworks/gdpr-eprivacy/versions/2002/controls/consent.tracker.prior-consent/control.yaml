@@ -1,0 +1,4 @@
+id: consent.tracker.prior-consent
+title: Prior consent for tracker access
+framework_references:
+  - eprivacy:2002:article-5-3

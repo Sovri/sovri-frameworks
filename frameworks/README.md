@@ -1,25 +1,52 @@
 # Framework catalogs
 
-Each family directory under `frameworks/` is the versioned source of truth for a
-compliance framework's controls, rules, and mappings. The agent reads framework
-text from these catalogs — never from an external API at runtime.
+Each family directory under `frameworks/` is the source of truth for versioned
+compliance framework catalogs. The agent reads framework text from these
+catalogs — never from an external API at runtime.
 
 ## Per-family layout
 
-The layout below is delivered by a later ticket (MAT-84). These directories ship
-now as placeholders so that schema and rule work can land without restructuring
-the repository.
+Each family stores catalog content under `versions/<version>/` so a framework
+can evolve without changing loader code or moving stable controls later.
 
-```
-frameworks/<family>/
-  framework.yaml      # versioned framework metadata (id, version, source URLs)
-  controls/           # one file per control
+```text
+frameworks/<family>/versions/<version>/
+  framework.yaml      # framework metadata (id, version, jurisdiction)
+  controls/           # one directory per stable control id
   rules/              # deterministic rules referencing controls
   mappings/           # cross-framework control mappings
 ```
 
-Each family will hold a versioned `framework.yaml`, plus the `controls/`,
-`rules/`, and `mappings/` paths shown above.
+For the GDPR / ePrivacy 2016 catalog, the stable child paths are:
+
+- `frameworks/gdpr-eprivacy/versions/2016/controls/consent.tracker.prior-consent/control.yaml`
+- `frameworks/gdpr-eprivacy/versions/2016/rules/consent.detect-trackers-without-consent-evidence/rule.yaml`
+- `frameworks/gdpr-eprivacy/versions/2016/mappings/consent.tracker.prior-consent/mapping.yaml`
+
+## Adding a framework family
+
+Add a new framework as catalog files under its version root. For example:
+
+- Add family `eu-cyber-resilience-act` version `2024` under
+  `frameworks/eu-cyber-resilience-act/versions/2024/`.
+- Add family `internal-risk-baseline` version `2026` under
+  `frameworks/internal-risk-baseline/versions/2026/`.
+
+For each version root, add:
+
+- `framework.yaml` at the version root.
+- Control files under `controls/<stable-control-id>/control.yaml`.
+- Rule files under `rules/<rule-id>/rule.yaml`.
+- Mapping files under `mappings/<stable-control-id>/mapping.yaml`.
+
+For `frameworks/eu-cyber-resilience-act/versions/2024/`, that resolves to:
+
+- `frameworks/eu-cyber-resilience-act/versions/2024/framework.yaml`
+- `frameworks/eu-cyber-resilience-act/versions/2024/controls/<stable-control-id>/control.yaml`
+- `frameworks/eu-cyber-resilience-act/versions/2024/rules/<rule-id>/rule.yaml`
+- `frameworks/eu-cyber-resilience-act/versions/2024/mappings/<stable-control-id>/mapping.yaml`
+
+Adding a framework is a catalog-data change only. Engine code does not need a per-framework registration change.
 
 ## Families
 
@@ -30,7 +57,8 @@ Each family will hold a versioned `framework.yaml`, plus the `controls/`,
 | `nis2`          | NIS2                                              |
 | `dora`          | DORA                                              |
 | `ai-act`        | EU AI Act                                         |
-| `custom`        | Internal / customer-specific families             |
+| `internal`      | Shared Sovri-maintained baseline                  |
+| `custom`        | Customer-specific extension point                 |
 
 The framework content and the id naming conventions are not defined here; they
 are delivered by a later ticket (MAT-84).
