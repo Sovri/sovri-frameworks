@@ -77,6 +77,11 @@ PY
     fail=1
     continue
   fi
+  if [[ "$control_id" =~ ^[a-z0-9-]+\.article-[a-z0-9-]+$ ]]; then
+    echo "control ids must use framework-neutral names like consent.tracker.prior-consent: $display_file"
+    fail=1
+    continue
+  fi
 
   mapfile -t framework_references < <(printf '%s\n' "$metadata" | sed '1d')
   if [ "${#framework_references[@]}" -eq 0 ]; then
