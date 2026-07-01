@@ -18,6 +18,10 @@ def main() -> int:
         print("mapping metadata must be a mapping", file=sys.stderr)
         return 1
 
+    if "framework_reference" in data:
+        print("framework_references must be used instead of framework_reference", file=sys.stderr)
+        return 1
+
     control_id = data.get("control_id", "")
     framework_references = data.get("framework_references") or []
     if isinstance(framework_references, list):
