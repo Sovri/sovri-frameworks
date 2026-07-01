@@ -1,0 +1,4 @@
+id: access.logging.admin-actions
+title: Administrative action logging
+framework_references:
+  - iso27001:2022:a-8-15
