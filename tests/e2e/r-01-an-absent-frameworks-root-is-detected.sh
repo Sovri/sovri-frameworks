@@ -1,17 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TMP_DIR="$(mktemp -d)"
 trap 'command -v trash >/dev/null 2>&1 && trash "$TMP_DIR" || true' EXIT
+CATALOG_ROOT="$TMP_DIR/frameworks"
 
 # Given the repository "sovri-frameworks" has been scaffolded
 # And the repository root does not contain a "frameworks/" directory
-test ! -e "$TMP_DIR/frameworks"
+if [ -e "$CATALOG_ROOT" ]; then
+  echo "unexpected pre-existing frameworks fixture" >&2
+  exit 1
+fi
 
 # When the catalog layout check runs
 set +e
-output="$("$ROOT/scripts/check-structure.sh" "$TMP_DIR/frameworks" 2>&1)"
+output="$(cd "$TMP_DIR" && "$REPO_ROOT/scripts/check-structure.sh" 2>&1)"
 status=$?
 set -e
 

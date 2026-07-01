@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT="${1:-frameworks}"
 FAMILIES=(gdpr-eprivacy iso27001 nis2 dora ai-act custom)
 if [ ! -d "$ROOT" ]; then
-  echo "MISSING catalog root: frameworks/"
+  echo "MISSING catalog root: $ROOT/"
   exit 1
 fi
 
