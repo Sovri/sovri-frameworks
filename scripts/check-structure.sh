@@ -99,6 +99,19 @@ if [ "$fail" -eq 0 ]; then
   mat_114_mapping="$mat_114_root/mappings/$MAT_114_CONTROL_ID/mapping.yaml"
 
   if [ ! -f "$mat_114_control" ]; then
+    mat_114_other_control=""
+    while IFS= read -r candidate_control; do
+      case "$candidate_control" in
+      "$ROOT/gdpr-eprivacy/"*) continue ;;
+      esac
+      mat_114_other_control="$candidate_control"
+      break
+    done < <(find "$ROOT" -path "*/controls/$MAT_114_CONTROL_ID/control.yaml" -type f)
+    if [ -n "$mat_114_other_control" ]; then
+      echo "MAT-114 placeholder must live under frameworks/gdpr-eprivacy/versions/2016/ (expected frameworks/gdpr-eprivacy/versions/2016/controls/$MAT_114_CONTROL_ID/control.yaml)"
+      exit 1
+    fi
+
     echo "missing control $MAT_114_CONTROL_ID"
     exit 1
   fi
