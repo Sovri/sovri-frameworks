@@ -60,6 +60,12 @@ for fam in "${FAMILIES[@]}"; do
     fi
   done
 
+  if [ "${#metadata_files[@]}" -lt "${#version_dirs[@]}" ]; then
+    echo "MISSING framework metadata: $ROOT/$fam/versions/*/framework.yaml"
+    fail=1
+    continue
+  fi
+
   if [ "${#metadata_files[@]}" -eq 0 ]; then
     echo "MISSING framework metadata: $ROOT/$fam/versions/*/framework.yaml"
     fail=1
