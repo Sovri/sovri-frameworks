@@ -25,6 +25,9 @@ def main() -> int:
     control_id = data.get("control_id", "")
     framework_references = data.get("framework_references") or []
     if isinstance(framework_references, list):
+        if not framework_references:
+            print("framework_references must contain at least one reference", file=sys.stderr)
+            return 1
         if not all(isinstance(reference, str) for reference in framework_references):
             print("framework_references must be a list of strings", file=sys.stderr)
             return 1
