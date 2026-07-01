@@ -26,6 +26,7 @@ instructions=(
   'When adding framework family `eu-cyber-resilience-act`, edit `./sovri-agent/src`.'
   'To add framework family eu-cyber-resilience-act, first register it in sovri-agent/src.'
   'When adding framework family eu-cyber-resilience-act, edit ../sovri-agent/src/.'
+  'To add framework family `eu-cyber-resilience-act`, register it in `/absolute/path/to/sovri-agent/src`.'
 )
 
 for instruction in "${instructions[@]}"; do
@@ -57,6 +58,7 @@ allowed_references=(
   'See `sovri-agent/src` for implementation details.'
   'Review `sovri-agent/src` for examples before changing catalog files.'
   'When adding framework family eu-cyber-resilience-act, review `sovri-agent/src` for examples.'
+  'When adding framework family eu-cyber-resilience-act, edit my-sovri-agent/src-file documentation.'
 )
 
 for reference in "${allowed_references[@]}"; do
