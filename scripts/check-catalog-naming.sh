@@ -5,15 +5,20 @@ ROOT="${1:-frameworks}"
 CONTROL_FILENAME="control.yaml"
 fail=0
 
-if ! command -v python3 >/dev/null 2>&1 || ! python3 -c "import yaml" >/dev/null 2>&1; then
-  echo "ERROR: Python PyYAML is required for catalog naming check. Install it with: pip install pyyaml"
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "ERROR: python3 is required for catalog naming check"
+  exit 1
+fi
+
+if ! python3 -c "import yaml" >/dev/null 2>&1; then
+  echo "ERROR: PyYAML import failed. Install it with: pip install pyyaml"
   exit 1
 fi
 
 ROOT_ABS="$(cd "$ROOT" && pwd)"
 ROOT_NAME="$(basename "$ROOT_ABS")"
 
-mapfile -t control_files < <(find "$ROOT" -path "*/controls/*/$CONTROL_FILENAME" -type f | sort)
+mapfile -t control_files < <(find "$ROOT_ABS" -path "*/controls/*/$CONTROL_FILENAME" -type f | sort)
 if [ "${#control_files[@]}" -eq 0 ]; then
   echo "catalog naming OK (no control files yet)"
   exit 0
@@ -47,6 +52,8 @@ if not isinstance(framework_references, list) or any(
     not isinstance(reference, str) for reference in framework_references
 ):
     raise SystemExit("framework_references must be a list of strings")
+if len(framework_references) != len(set(framework_references)):
+    raise SystemExit("framework_references must not contain duplicates")
 
 print(control_id)
 for reference in framework_references:
