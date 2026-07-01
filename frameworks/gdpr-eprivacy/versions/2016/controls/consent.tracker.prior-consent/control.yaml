@@ -1,4 +1,5 @@
 id: consent.tracker.prior-consent
 title: Prior consent for tracker access
+placeholder_role: consent control metadata
 framework_references:
   - gdpr:2016:article-6
