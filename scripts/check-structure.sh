@@ -8,15 +8,6 @@ ROOT="${1:-frameworks}"
 FAMILIES=(gdpr-eprivacy iso27001 nis2 dora ai-act internal custom)
 # Initial catalog framework versions are legal publication years.
 VERSION_PATTERN='^[0-9]{4}$'
-declare -A EXPECTED_VERSIONS=(
-  [gdpr-eprivacy]=2016
-  [iso27001]=2022
-  [nis2]=2022
-  [dora]=2022
-  [ai-act]=2024
-  [internal]=2026
-  [custom]=2026
-)
 if [ ! -d "$ROOT" ]; then
   if [ "$ROOT" = "frameworks" ] && [ -d "farameworks" ]; then
     echo "catalog root must be frameworks/"
@@ -43,7 +34,18 @@ for fam in "${FAMILIES[@]}"; do
     continue
   fi
 
-  expected_metadata="$ROOT/$fam/versions/${EXPECTED_VERSIONS[$fam]}/framework.yaml"
+  version_root="$ROOT/$fam/versions"
+  version_dirs=()
+  if [ -d "$version_root" ]; then
+    while IFS= read -r -d '' version_dir; do
+      version_dirs+=("$version_dir")
+    done < <(find "$version_root" -mindepth 1 -maxdepth 1 -type d -print0)
+  fi
+  expected_version="<version>"
+  if [ "${#version_dirs[@]}" -eq 1 ]; then
+    expected_version="${version_dirs[0]##*/}"
+  fi
+  expected_metadata="$ROOT/$fam/versions/$expected_version/framework.yaml"
   if [ -f "$ROOT/$fam/framework.yaml" ]; then
     echo "framework metadata must live under $expected_metadata"
     fail=1
@@ -51,7 +53,6 @@ for fam in "${FAMILIES[@]}"; do
   fi
 
   metadata_files=()
-  version_root="$ROOT/$fam/versions"
   if [ -d "$version_root" ]; then
     while IFS= read -r -d '' metadata_file; do
       metadata_files+=("$metadata_file")
