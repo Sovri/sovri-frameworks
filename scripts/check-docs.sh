@@ -19,6 +19,11 @@ if grep -qE '^#[[:space:]]+Framework catalogs' "$README"; then
     fi
   done
 
+  if grep -Fq -- "sovri-agent/src" "$README"; then
+    echo "adding a framework must not require engine code changes"
+    fail=1
+  fi
+
   if [ "$fail" -eq 0 ]; then echo "catalog docs OK"; else exit 1; fi
 else
   grep -qE '^##[[:space:]]+Development' "$README" || { echo "MISSING: ## Development section"; fail=1; }
