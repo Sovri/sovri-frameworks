@@ -26,7 +26,7 @@ python)
   ;;
 ruby)
   for y in "${yamls[@]}"; do
-    ruby -e "require 'yaml'; YAML.load_file(ARGV.fetch(0))" "$y" || { echo "INVALID YAML: $y"; exit 1; }
+    ruby -e "require 'yaml'; YAML.safe_load(File.read(ARGV.fetch(0), encoding: 'UTF-8'))" "$y" || { echo "INVALID YAML: $y"; exit 1; }
   done
   ;;
 esac
