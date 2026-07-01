@@ -103,7 +103,12 @@ if [ "$fail" -eq 0 ]; then
     exit 1
   fi
 
-  if [ -f "$mat_114_rule" ] && [ -f "$mat_114_mapping" ]; then
+  if [ ! -f "$mat_114_rule" ]; then
+    echo "missing rule $MAT_114_RULE_ID"
+    exit 1
+  fi
+
+  if [ -f "$mat_114_mapping" ]; then
     echo "MAT-114 placeholder present"
     echo "placeholder control id: $MAT_114_CONTROL_ID"
     echo "placeholder rule id: $MAT_114_RULE_ID"
