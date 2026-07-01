@@ -9,7 +9,7 @@ catalogs — never from an external API at runtime.
 Each family stores catalog content under `versions/<version>/` so a framework
 can evolve without changing loader code or moving stable controls later.
 
-```
+```text
 frameworks/<family>/versions/<version>/
   framework.yaml      # framework metadata (id, version, jurisdiction)
   controls/           # one directory per stable control id
