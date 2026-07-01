@@ -53,4 +53,21 @@ for instruction in "${instructions[@]}"; do
   fi
 done
 
+allowed_references=(
+  'See `sovri-agent/src` for implementation details.'
+  'Review `sovri-agent/src` for examples before changing catalog files.'
+  'When adding framework family eu-cyber-resilience-act, review `sovri-agent/src` for examples.'
+)
+
+for reference in "${allowed_references[@]}"; do
+  cp "$SOURCE_README" "$README"
+  printf '\n%s\n' "$reference" >> "$README"
+
+  if ! output="$("$ROOT/scripts/check-docs.sh" "$README" 2>&1)"; then
+    echo "false positive for non-registration engine path reference" >&2
+    echo "$output" >&2
+    exit 1
+  fi
+done
+
 echo "engine registration docs violation detection OK"
