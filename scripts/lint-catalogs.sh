@@ -44,7 +44,7 @@ if [ "$parser" = "python" ]; then
     "$ROOT_ABS"/*) display_file="$ROOT_NAME/${mapping_abs#$ROOT_ABS/}" ;;
     esac
 
-    mapping_summary="$(python3 "$SCRIPT_DIR/catalog_mapping_summary.py" "$mapping_file")"
+    mapping_summary="$("$SCRIPT_DIR/catalog_mapping_summary.py" "$mapping_file")"
     control_id="$(printf '%s\n' "$mapping_summary" | sed -n '1p')"
     reference_count="$(printf '%s\n' "$mapping_summary" | sed -n '2p')"
     echo "validated mapping.yaml: $display_file"

@@ -5,15 +5,26 @@ import yaml
 
 
 def main() -> int:
-    with open(sys.argv[1], encoding="utf-8") as handle:
-        data = yaml.safe_load(handle) or {}
+    try:
+        with open(sys.argv[1], encoding="utf-8") as handle:
+            data = yaml.safe_load(handle)
+    except yaml.YAMLError as error:
+        print(f"invalid mapping YAML: {error}", file=sys.stderr)
+        return 1
 
-    if not isinstance(data, dict):
+    if data is None:
         data = {}
+    if not isinstance(data, dict):
+        print("mapping metadata must be a mapping", file=sys.stderr)
+        return 1
 
     control_id = data.get("control_id", "")
     framework_references = data.get("framework_references") or []
-    if not isinstance(framework_references, list):
+    if isinstance(framework_references, list):
+        if not all(isinstance(reference, str) for reference in framework_references):
+            print("framework_references must be a list of strings", file=sys.stderr)
+            return 1
+    else:
         framework_references = []
 
     print(control_id)
