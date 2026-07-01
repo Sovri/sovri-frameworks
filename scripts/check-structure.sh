@@ -34,12 +34,36 @@ for fam in "${FAMILIES[@]}"; do
     continue
   fi
 
-  metadata_files=()
   version_root="$ROOT/$fam/versions"
+  version_dirs=()
   if [ -d "$version_root" ]; then
-    while IFS= read -r -d '' metadata_file; do
+    while IFS= read -r -d '' version_dir; do
+      version_dirs+=("$version_dir")
+    done < <(find "$version_root" -mindepth 1 -maxdepth 1 -type d -print0)
+  fi
+  expected_version="<version>"
+  if [ "${#version_dirs[@]}" -eq 1 ]; then
+    expected_version="${version_dirs[0]##*/}"
+  fi
+  expected_metadata="$ROOT/$fam/versions/$expected_version/framework.yaml"
+  if [ -f "$ROOT/$fam/framework.yaml" ]; then
+    echo "framework metadata must live under $expected_metadata"
+    fail=1
+    continue
+  fi
+
+  metadata_files=()
+  for version_dir in "${version_dirs[@]}"; do
+    metadata_file="$version_dir/framework.yaml"
+    if [ -f "$metadata_file" ]; then
       metadata_files+=("$metadata_file")
-    done < <(find "$version_root" -mindepth 2 -maxdepth 2 -type f -name 'framework.yaml' -print0)
+    fi
+  done
+
+  if [ "${#metadata_files[@]}" -lt "${#version_dirs[@]}" ]; then
+    echo "MISSING framework metadata: $ROOT/$fam/versions/*/framework.yaml"
+    fail=1
+    continue
   fi
 
   if [ "${#metadata_files[@]}" -eq 0 ]; then
