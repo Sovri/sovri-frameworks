@@ -1,0 +1,8 @@
+id: ai-act
+name: EU Artificial Intelligence Act
+version: "2024"
+jurisdiction: EU
+scope: Risk-based governance requirements for AI systems.
+source:
+  url: https://eur-lex.europa.eu/eli/reg/2024/1689/oj
+  description: Artificial Intelligence Act official text

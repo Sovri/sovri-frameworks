@@ -1,0 +1,7 @@
+id: custom
+name: Custom control catalog
+version: "2026"
+jurisdiction: Customer
+scope: Customer-specific control families and policy baselines.
+source:
+  description: Customer framework placeholder metadata

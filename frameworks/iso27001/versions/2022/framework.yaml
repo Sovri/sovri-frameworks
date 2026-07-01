@@ -1,0 +1,8 @@
+id: iso27001
+name: ISO/IEC 27001
+version: "2022"
+jurisdiction: International
+scope: Information security management systems.
+source:
+  url: https://www.iso.org/standard/27001
+  description: ISO/IEC 27001 information security management overview

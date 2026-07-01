@@ -1,0 +1,8 @@
+id: dora
+name: Digital Operational Resilience Act
+version: "2022"
+jurisdiction: EU
+scope: Digital operational resilience for financial entities.
+source:
+  url: https://eur-lex.europa.eu/eli/reg/2022/2554/oj
+  description: Digital Operational Resilience Act official text
