@@ -98,7 +98,12 @@ if [ "$fail" -eq 0 ]; then
   mat_114_rule="$mat_114_root/rules/$MAT_114_RULE_ID/rule.yaml"
   mat_114_mapping="$mat_114_root/mappings/$MAT_114_CONTROL_ID/mapping.yaml"
 
-  if [ -f "$mat_114_control" ] && [ -f "$mat_114_rule" ] && [ -f "$mat_114_mapping" ]; then
+  if [ ! -f "$mat_114_control" ]; then
+    echo "missing control $MAT_114_CONTROL_ID"
+    exit 1
+  fi
+
+  if [ -f "$mat_114_rule" ] && [ -f "$mat_114_mapping" ]; then
     echo "MAT-114 placeholder present"
     echo "placeholder control id: $MAT_114_CONTROL_ID"
     echo "placeholder rule id: $MAT_114_RULE_ID"
