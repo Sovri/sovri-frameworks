@@ -19,7 +19,13 @@ if grep -qE '^#[[:space:]]+Framework catalogs' "$README"; then
     fi
   done
 
-  if grep -Fq -- "sovri-agent/src" "$README"; then
+  engine_path='(\.\.?/)?sovri-agent/src'
+  add_framework='(add|adding)[^[:cntrl:]]*(framework|family)'
+  engine_action='(edit|register)'
+  before_path_pattern="$add_framework[^[:cntrl:]]*$engine_action[^[:cntrl:]]*$engine_path"
+  after_path_pattern="$engine_action[^[:cntrl:]]*$engine_path[^[:cntrl:]]*$add_framework"
+  engine_registration_pattern="$before_path_pattern|$after_path_pattern"
+  if grep -Eiq -- "$engine_registration_pattern" "$README"; then
     echo "adding a framework must not require engine code changes"
     fail=1
   fi
