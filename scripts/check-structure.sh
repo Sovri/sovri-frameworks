@@ -18,6 +18,14 @@ fi
 
 fail=0
 for fam in "${FAMILIES[@]}"; do
+  case "$fam" in
+  *[!a-z0-9-]* | "")
+    echo "INVALID family name: $fam"
+    fail=1
+    continue
+    ;;
+  esac
+
   if [ ! -d "$ROOT/$fam" ]; then
     echo "MISSING family: $fam"
     fail=1
@@ -25,10 +33,12 @@ for fam in "${FAMILIES[@]}"; do
   fi
 
   metadata_files=()
-  for metadata_file in "$ROOT/$fam"/versions/*/framework.yaml; do
-    [ -e "$metadata_file" ] || continue
-    metadata_files+=("$metadata_file")
-  done
+  version_root="$ROOT/$fam/versions"
+  if [ -d "$version_root" ]; then
+    while IFS= read -r -d '' metadata_file; do
+      metadata_files+=("$metadata_file")
+    done < <(find "$version_root" -mindepth 2 -maxdepth 2 -type f -name 'framework.yaml' -print0)
+  fi
 
   if [ "${#metadata_files[@]}" -eq 0 ]; then
     echo "MISSING framework metadata: $ROOT/$fam/versions/<version>/framework.yaml"
