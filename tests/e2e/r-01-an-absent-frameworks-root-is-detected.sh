@@ -32,4 +32,21 @@ if [[ "$output" != *"MISSING catalog root: frameworks/"* ]]; then
   exit 1
 fi
 
+custom_root="$TMP_DIR/custom-root"
+set +e
+custom_output="$("$REPO_ROOT/scripts/check-structure.sh" "$custom_root" 2>&1)"
+custom_status=$?
+set -e
+
+if [ "$custom_status" -eq 0 ]; then
+  echo "expected custom root catalog layout check to fail" >&2
+  exit 1
+fi
+
+if [[ "$custom_output" != *"MISSING catalog root: $custom_root/"* ]]; then
+  echo "expected missing custom catalog root output" >&2
+  echo "$custom_output" >&2
+  exit 1
+fi
+
 echo "absent frameworks root detection OK"
