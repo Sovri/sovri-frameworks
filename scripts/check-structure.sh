@@ -108,11 +108,14 @@ if [ "$fail" -eq 0 ]; then
     exit 1
   fi
 
-  if [ -f "$mat_114_mapping" ]; then
-    echo "MAT-114 placeholder present"
-    echo "placeholder control id: $MAT_114_CONTROL_ID"
-    echo "placeholder rule id: $MAT_114_RULE_ID"
+  if [ ! -f "$mat_114_mapping" ]; then
+    echo "missing mapping $MAT_114_CONTROL_ID"
+    exit 1
   fi
+
+  echo "MAT-114 placeholder present"
+  echo "placeholder control id: $MAT_114_CONTROL_ID"
+  echo "placeholder rule id: $MAT_114_RULE_ID"
 
   echo "catalog structure OK (${#FAMILIES[@]} families under $ROOT/)"
 else
