@@ -6,9 +6,13 @@ TMP_DIR="$(mktemp -d)"
 trap 'command -v trash >/dev/null 2>&1 && trash "$TMP_DIR" || true' EXIT
 
 mkdir -p "$TMP_DIR/frameworks"
-for family in gdpr-eprivacy nis2 dora ai-act internal custom; do
+while IFS= read -r family_path; do
+  family="$(basename "$family_path")"
+  if [ "$family" = "iso27001" ]; then
+    continue
+  fi
   mkdir -p "$TMP_DIR/frameworks/$family"
-done
+done < <(find "$ROOT/frameworks" -mindepth 1 -maxdepth 1 -type d | sort)
 
 # Given the repository "sovri-frameworks" has been scaffolded
 # And the "frameworks/gdpr-eprivacy" directory exists
@@ -18,7 +22,12 @@ test -d "$TMP_DIR/frameworks/gdpr-eprivacy"
 test ! -e "$TMP_DIR/frameworks/iso27001"
 
 # When the catalog layout check runs
-if output="$("$ROOT/scripts/check-structure.sh" "$TMP_DIR/frameworks" 2>&1)"; then
+set +e
+output="$("$ROOT/scripts/check-structure.sh" "$TMP_DIR/frameworks" 2>&1)"
+status=$?
+set -e
+
+if [ "$status" -eq 0 ]; then
   echo "expected catalog layout check to fail" >&2
   exit 1
 fi
