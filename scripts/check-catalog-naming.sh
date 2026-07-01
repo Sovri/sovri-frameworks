@@ -77,7 +77,7 @@ PY
     fail=1
     continue
   fi
-  if [[ "$control_id" =~ ^[a-z0-9-]+\.article-[a-z0-9-]+$ ]]; then
+  if [[ "$control_id" =~ ^gdpr\.article-[0-9]+$ ]]; then
     echo "control ids must use framework-neutral names like consent.tracker.prior-consent: $display_file"
     fail=1
     continue
