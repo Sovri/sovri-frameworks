@@ -41,7 +41,8 @@ if [[ "$output" != *"INVALID mapping.yaml: $mapping_file"* ]]; then
 fi
 
 # And the validation error names the duplicate reference "gdpr:2016:article-6"
-if [[ "$output" != *"$duplicate_reference"* ]]; then
+expected="duplicate framework reference: $duplicate_reference"
+if [[ "$output" != *"$expected"* ]]; then
   echo "expected duplicate reference in validation output" >&2
   echo "$output" >&2
   exit 1
