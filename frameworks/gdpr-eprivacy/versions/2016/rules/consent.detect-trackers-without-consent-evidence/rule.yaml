@@ -1,0 +1,3 @@
+id: consent.detect-trackers-without-consent-evidence
+title: Detect tracker evidence without prior consent
+control_id: consent.tracker.prior-consent
