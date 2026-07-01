@@ -3,6 +3,8 @@ set -euo pipefail
 # Validate that every required framework family directory exists (R-02/R-03).
 # Runs fully offline with no secrets. Names any missing family.
 ROOT="${1:-frameworks}"
+# `internal` is the shared Sovri-maintained baseline family; `custom` is the
+# customer-owned extension point.
 FAMILIES=(gdpr-eprivacy iso27001 nis2 dora ai-act internal custom)
 if [ ! -d "$ROOT" ]; then
   if [ "$ROOT" = "frameworks" ] && [ -d "farameworks" ]; then
@@ -15,16 +17,6 @@ if [ ! -d "$ROOT" ]; then
 fi
 
 fail=0
-framework_version() {
-  case "$1" in
-    gdpr-eprivacy) echo "2016" ;;
-    iso27001 | nis2 | dora) echo "2022" ;;
-    ai-act) echo "2024" ;;
-    internal | custom) echo "2026" ;;
-    *) return 1 ;;
-  esac
-}
-
 for fam in "${FAMILIES[@]}"; do
   if [ ! -d "$ROOT/$fam" ]; then
     echo "MISSING family: $fam"
@@ -32,8 +24,21 @@ for fam in "${FAMILIES[@]}"; do
     continue
   fi
 
-  version="$(framework_version "$fam")"
-  metadata_file="$ROOT/$fam/versions/$version/framework.yaml"
+  metadata_files=("$ROOT/$fam"/versions/*/framework.yaml)
+  if [ ! -f "${metadata_files[0]}" ]; then
+    echo "MISSING framework metadata: $ROOT/$fam/versions/<version>/framework.yaml"
+    fail=1
+    continue
+  fi
+
+  if [ "${#metadata_files[@]}" -ne 1 ]; then
+    echo "MULTIPLE framework metadata files: $ROOT/$fam/versions/*/framework.yaml"
+    fail=1
+    continue
+  fi
+
+  metadata_file="${metadata_files[0]}"
+  version="$(basename "$(dirname "$metadata_file")")"
   if [ ! -f "$metadata_file" ]; then
     echo "MISSING framework metadata: $metadata_file"
     fail=1

@@ -34,6 +34,21 @@ for example in "${examples[@]}"; do
     echo "$output" >&2
     exit 1
   fi
+
+  if ! grep -qx "id: $family" "$ROOT/$framework_file"; then
+    echo "expected id field for $family in $framework_file" >&2
+    exit 1
+  fi
+
+  if ! grep -qx "version: \"$version\"" "$ROOT/$framework_file"; then
+    echo "expected version field for $version in $framework_file" >&2
+    exit 1
+  fi
+
+  if ! grep -q "^jurisdiction: " "$ROOT/$framework_file"; then
+    echo "expected jurisdiction field in $framework_file" >&2
+    exit 1
+  fi
 done
 
 echo "versioned framework metadata files OK"
