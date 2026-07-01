@@ -11,7 +11,7 @@ has_engine_registration_instruction() {
       line = tolower($0)
       has_add_framework = line ~ /(add|adding)/ && line ~ /(framework|family)/
       has_engine_action = line ~ /(edit|register)/
-      has_engine_path = line ~ /(^|[[:space:]`"(])([^[:space:]`"()]*\/)?sovri-agent\/src\/?([[:space:]`"(),.;:]|$)/
+      has_engine_path = line ~ /(^|[[:space:]`"(])([^[:space:]`"()]*\/)?sovri-agent\/src(\/[^[:space:]`"()]*)?/
 
       if (has_add_framework && has_engine_action && has_engine_path) {
         found = 1
