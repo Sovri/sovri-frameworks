@@ -23,22 +23,26 @@ def main() -> int:
         return 1
 
     control_id = data.get("control_id", "")
+    if not isinstance(control_id, str) or not control_id.strip():
+        print("control_id must be a non-empty string", file=sys.stderr)
+        return 1
+
     framework_references = data.get("framework_references") or []
-    if isinstance(framework_references, list):
-        if not framework_references:
-            print("framework_references must contain at least one reference", file=sys.stderr)
+    if not isinstance(framework_references, list):
+        print("framework_references must be a list of strings", file=sys.stderr)
+        return 1
+    if not framework_references:
+        print("framework_references must contain at least one reference", file=sys.stderr)
+        return 1
+    if not all(isinstance(reference, str) for reference in framework_references):
+        print("framework_references must be a list of strings", file=sys.stderr)
+        return 1
+    seen_references = set()
+    for reference in framework_references:
+        if reference in seen_references:
+            print(f"duplicate framework reference: {reference}", file=sys.stderr)
             return 1
-        if not all(isinstance(reference, str) for reference in framework_references):
-            print("framework_references must be a list of strings", file=sys.stderr)
-            return 1
-        seen_references = set()
-        for reference in framework_references:
-            if reference in seen_references:
-                print(f"duplicate framework reference: {reference}", file=sys.stderr)
-                return 1
-            seen_references.add(reference)
-    else:
-        framework_references = []
+        seen_references.add(reference)
 
     print(control_id)
     print(len(framework_references))

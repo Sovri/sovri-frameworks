@@ -32,17 +32,26 @@ ruby)
   ;;
 esac
 
+ROOT_ABS="$(cd "$ROOT" && pwd)"
+ROOT_NAME="$(basename "$ROOT_ABS")"
+mapfile -t mappings < <(find "$ROOT_ABS" -path "*/mappings/*/mapping.yaml" -type f | sort)
+
+# catalog_mapping_summary.py needs Python + PyYAML. If mapping.yaml files exist
+# but only the Ruby fallback is available, fail loudly instead of skipping the
+# mapping-shape validation and letting invalid framework_references pass silently.
+if [ "${#mappings[@]}" -gt 0 ] && [ "$parser" != "python" ]; then
+  echo "ERROR: mapping validation requires Python + PyYAML for ${#mappings[@]} mapping file(s) (install PyYAML)"
+  exit 1
+fi
+
 if [ "$parser" = "python" ]; then
-  ROOT_ABS="$(cd "$ROOT" && pwd)"
-  ROOT_NAME="$(basename "$ROOT_ABS")"
   mapping_fail=0
-  mapfile -t mappings < <(find "$ROOT_ABS" -path "*/mappings/*/mapping.yaml" -type f | sort)
   for mapping_file in "${mappings[@]}"; do
     mapping_dir="$(cd "$(dirname "$mapping_file")" && pwd)"
     mapping_abs="$mapping_dir/$(basename "$mapping_file")"
     display_file="$mapping_abs"
     case "$mapping_abs" in
-    "$ROOT_ABS"/*) display_file="$ROOT_NAME/${mapping_abs#$ROOT_ABS/}" ;;
+    "$ROOT_ABS"/*) display_file="$ROOT_NAME/${mapping_abs#"$ROOT_ABS"/}" ;;
     esac
 
     if ! mapping_summary="$("$SCRIPT_DIR/catalog_mapping_summary.py" "$mapping_file" 2>&1)"; then
