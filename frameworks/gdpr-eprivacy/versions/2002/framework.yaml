@@ -1,0 +1,8 @@
+id: gdpr-eprivacy
+name: GDPR and ePrivacy
+version: "2002"
+jurisdiction: EU
+scope: Project websites that store or access information on user devices.
+source:
+  url: https://eur-lex.europa.eu/eli/dir/2002/58/oj
+  description: ePrivacy Directive official text
