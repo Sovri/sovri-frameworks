@@ -5,6 +5,22 @@ set -euo pipefail
 README="${1:-README.md}"
 fail=0
 
+has_engine_registration_instruction() {
+  awk '
+    {
+      line = tolower($0)
+      has_add_framework = line ~ /(add|adding)/ && line ~ /(framework|family)/
+      has_engine_action = line ~ /(edit|register)/
+      has_engine_path = line ~ /(^|[[:space:]`"(])([^[:space:]`"()]*\/)?sovri-agent\/src\/?([[:space:]`"(),.;:]|$)/
+
+      if (has_add_framework && has_engine_action && has_engine_path) {
+        found = 1
+      }
+    }
+    END { exit found ? 0 : 1 }
+  ' "$README"
+}
+
 if grep -qE '^#[[:space:]]+Framework catalogs' "$README"; then
   required_catalog_paths=(
     "frameworks/gdpr-eprivacy/versions/2016/controls/consent.tracker.prior-consent/control.yaml"
@@ -18,6 +34,11 @@ if grep -qE '^#[[:space:]]+Framework catalogs' "$README"; then
       fail=1
     fi
   done
+
+  if has_engine_registration_instruction; then
+    echo "adding a framework must not require engine code changes"
+    fail=1
+  fi
 
   if [ "$fail" -eq 0 ]; then echo "catalog docs OK"; else exit 1; fi
 else
