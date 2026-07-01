@@ -24,6 +24,8 @@ instructions=(
   'When adding framework family `eu-cyber-resilience-act`, edit `sovri-agent/src` to register the new framework.'
   'To add framework family `eu-cyber-resilience-act`, register it in `../sovri-agent/src`.'
   'When adding framework family `eu-cyber-resilience-act`, edit `./sovri-agent/src`.'
+  'To add framework family eu-cyber-resilience-act, first register it in sovri-agent/src.'
+  'When adding framework family eu-cyber-resilience-act, edit ../sovri-agent/src/.'
 )
 
 for instruction in "${instructions[@]}"; do
