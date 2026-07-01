@@ -31,4 +31,43 @@ ruby)
   ;;
 esac
 
+if [ "$parser" = "python" ]; then
+  ROOT_ABS="$(cd "$ROOT" && pwd)"
+  ROOT_NAME="$(basename "$ROOT_ABS")"
+  mapfile -t mappings < <(find "$ROOT_ABS" -path "*/mappings/*/mapping.yaml" -type f | sort)
+  for mapping_file in "${mappings[@]}"; do
+    mapping_dir="$(cd "$(dirname "$mapping_file")" && pwd)"
+    mapping_abs="$mapping_dir/$(basename "$mapping_file")"
+    display_file="$mapping_abs"
+    case "$mapping_abs" in
+    "$ROOT_ABS"/*) display_file="$ROOT_NAME/${mapping_abs#$ROOT_ABS/}" ;;
+    esac
+
+    mapping_summary="$(
+      python3 - "$mapping_file" <<'PY'
+import sys
+import yaml
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    data = yaml.safe_load(handle) or {}
+
+if not isinstance(data, dict):
+    data = {}
+
+control_id = data.get("control_id", "")
+framework_references = data.get("framework_references") or []
+if not isinstance(framework_references, list):
+    framework_references = []
+
+print(control_id)
+print(len(framework_references))
+PY
+    )"
+    control_id="$(printf '%s\n' "$mapping_summary" | sed -n '1p')"
+    reference_count="$(printf '%s\n' "$mapping_summary" | sed -n '2p')"
+    echo "validated mapping.yaml: $display_file"
+    echo "control $control_id is bound to $reference_count framework references"
+  done
+fi
+
 echo "catalog lint OK (${#yamls[@]} files)"
