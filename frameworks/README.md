@@ -39,6 +39,13 @@ For each version root, add:
 - Rule files under `rules/<rule-id>/rule.yaml`.
 - Mapping files under `mappings/<stable-control-id>/mapping.yaml`.
 
+For `frameworks/eu-cyber-resilience-act/versions/2024/`, that resolves to:
+
+- `frameworks/eu-cyber-resilience-act/versions/2024/framework.yaml`
+- `frameworks/eu-cyber-resilience-act/versions/2024/controls/<stable-control-id>/control.yaml`
+- `frameworks/eu-cyber-resilience-act/versions/2024/rules/<rule-id>/rule.yaml`
+- `frameworks/eu-cyber-resilience-act/versions/2024/mappings/<stable-control-id>/mapping.yaml`
+
 Adding a framework is a catalog-data change only. Engine code does not need a per-framework registration change.
 
 ## Families
