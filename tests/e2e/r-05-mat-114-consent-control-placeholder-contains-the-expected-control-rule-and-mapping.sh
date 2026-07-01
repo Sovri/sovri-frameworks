@@ -22,17 +22,26 @@ fi
 if [ ! -f "$ROOT/$control_file" ]; then
   echo "expected catalog file: $control_file" >&2
   fail=1
+elif ! grep -qx "id: $control_id" "$ROOT/$control_file"; then
+  echo "expected control id $control_id in $control_file" >&2
+  fail=1
 fi
 
 # And the catalog contains "frameworks/gdpr-eprivacy/versions/2016/rules/consent.detect-trackers-without-consent-evidence/rule.yaml"
 if [ ! -f "$ROOT/$rule_file" ]; then
   echo "expected catalog file: $rule_file" >&2
   fail=1
+elif ! grep -qx "id: $rule_id" "$ROOT/$rule_file"; then
+  echo "expected rule id $rule_id in $rule_file" >&2
+  fail=1
 fi
 
 # And the catalog contains "frameworks/gdpr-eprivacy/versions/2016/mappings/consent.tracker.prior-consent/mapping.yaml"
 if [ ! -f "$ROOT/$mapping_file" ]; then
   echo "expected catalog file: $mapping_file" >&2
+  fail=1
+elif ! grep -qx "control_id: $control_id" "$ROOT/$mapping_file"; then
+  echo "expected mapping control_id $control_id in $mapping_file" >&2
   fail=1
 fi
 
