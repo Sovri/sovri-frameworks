@@ -8,6 +8,15 @@ ROOT="${1:-frameworks}"
 FAMILIES=(gdpr-eprivacy iso27001 nis2 dora ai-act internal custom)
 # Initial catalog framework versions are legal publication years.
 VERSION_PATTERN='^[0-9]{4}$'
+declare -A EXPECTED_VERSIONS=(
+  [gdpr-eprivacy]=2016
+  [iso27001]=2022
+  [nis2]=2022
+  [dora]=2022
+  [ai-act]=2024
+  [internal]=2026
+  [custom]=2026
+)
 if [ ! -d "$ROOT" ]; then
   if [ "$ROOT" = "frameworks" ] && [ -d "farameworks" ]; then
     echo "catalog root must be frameworks/"
@@ -30,6 +39,13 @@ for fam in "${FAMILIES[@]}"; do
 
   if [ ! -d "$ROOT/$fam" ]; then
     echo "MISSING family: $fam"
+    fail=1
+    continue
+  fi
+
+  expected_metadata="$ROOT/$fam/versions/${EXPECTED_VERSIONS[$fam]}/framework.yaml"
+  if [ -f "$ROOT/$fam/framework.yaml" ]; then
+    echo "framework metadata must live under $expected_metadata"
     fail=1
     continue
   fi
