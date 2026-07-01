@@ -31,6 +31,12 @@ def main() -> int:
         if not all(isinstance(reference, str) for reference in framework_references):
             print("framework_references must be a list of strings", file=sys.stderr)
             return 1
+        seen_references = set()
+        for reference in framework_references:
+            if reference in seen_references:
+                print(f"duplicate framework reference: {reference}", file=sys.stderr)
+                return 1
+            seen_references.add(reference)
     else:
         framework_references = []
 
