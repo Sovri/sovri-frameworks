@@ -41,27 +41,26 @@ for fam in "${FAMILIES[@]}"; do
       version_dirs+=("$version_dir")
     done < <(find "$version_root" -mindepth 1 -maxdepth 1 -type d -print0)
   fi
+  metadata_files=()
+  missing_metadata_dirs=()
+  for version_dir in "${version_dirs[@]}"; do
+    metadata_file="$version_dir/framework.yaml"
+    if [ -f "$metadata_file" ]; then
+      metadata_files+=("$metadata_file")
+    else
+      missing_metadata_dirs+=("$version_dir")
+    fi
+  done
+
   expected_version="<version>"
-  if [ "${#version_dirs[@]}" -eq 1 ]; then
+  if [ "${#missing_metadata_dirs[@]}" -eq 1 ]; then
+    expected_version="${missing_metadata_dirs[0]##*/}"
+  elif [ "${#version_dirs[@]}" -eq 1 ]; then
     expected_version="${version_dirs[0]##*/}"
   fi
   expected_metadata="$ROOT/$fam/versions/$expected_version/framework.yaml"
   if [ -f "$ROOT/$fam/framework.yaml" ]; then
     echo "framework metadata must live under $expected_metadata"
-    fail=1
-    continue
-  fi
-
-  metadata_files=()
-  for version_dir in "${version_dirs[@]}"; do
-    metadata_file="$version_dir/framework.yaml"
-    if [ -f "$metadata_file" ]; then
-      metadata_files+=("$metadata_file")
-    fi
-  done
-
-  if [ "${#metadata_files[@]}" -lt "${#version_dirs[@]}" ]; then
-    echo "MISSING framework metadata: $ROOT/$fam/versions/*/framework.yaml"
     fail=1
     continue
   fi
@@ -72,23 +71,24 @@ for fam in "${FAMILIES[@]}"; do
     continue
   fi
 
-  if [ "${#metadata_files[@]}" -ne 1 ]; then
-    echo "MULTIPLE framework metadata files: $ROOT/$fam/versions/*/framework.yaml"
+  if [ "${#missing_metadata_dirs[@]}" -gt 0 ]; then
+    echo "MISSING framework metadata: $ROOT/$fam/versions/*/framework.yaml"
     fail=1
     continue
   fi
 
-  metadata_file="${metadata_files[0]}"
-  metadata_dir="${metadata_file%/framework.yaml}"
-  version="${metadata_dir##*/}"
-  if [[ ! "$version" =~ $VERSION_PATTERN ]]; then
-    echo "INVALID framework metadata version path: $metadata_dir"
-    fail=1
-    continue
-  fi
+  for metadata_file in "${metadata_files[@]}"; do
+    metadata_dir="${metadata_file%/framework.yaml}"
+    version="${metadata_dir##*/}"
+    if [[ ! "$version" =~ $VERSION_PATTERN ]]; then
+      echo "INVALID framework metadata version path: $metadata_dir"
+      fail=1
+      continue
+    fi
 
-  echo "accepted framework family $fam version $version"
-  echo "framework metadata: $metadata_file"
+    echo "accepted framework family $fam version $version"
+    echo "framework metadata: $metadata_file"
+  done
 done
 if [ "$fail" -eq 0 ]; then
   echo "catalog structure OK (${#FAMILIES[@]} families under $ROOT/)"
