@@ -3,6 +3,7 @@ set -euo pipefail
 # Lint catalog YAML files. Placeholders only for now, so this passes when no
 # catalog YAML exists yet. Validates YAML syntax when files are present.
 ROOT="${1:-frameworks}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 mapfile -t yamls < <(find "$ROOT" -type f \( -name '*.yaml' -o -name '*.yml' \) 2>/dev/null || true)
 if [ ${#yamls[@]} -eq 0 ]; then
   echo "catalog lint OK (no catalog YAML yet)"
@@ -30,5 +31,25 @@ ruby)
   done
   ;;
 esac
+
+if [ "$parser" = "python" ]; then
+  ROOT_ABS="$(cd "$ROOT" && pwd)"
+  ROOT_NAME="$(basename "$ROOT_ABS")"
+  mapfile -t mappings < <(find "$ROOT_ABS" -path "*/mappings/*/mapping.yaml" -type f | sort)
+  for mapping_file in "${mappings[@]}"; do
+    mapping_dir="$(cd "$(dirname "$mapping_file")" && pwd)"
+    mapping_abs="$mapping_dir/$(basename "$mapping_file")"
+    display_file="$mapping_abs"
+    case "$mapping_abs" in
+    "$ROOT_ABS"/*) display_file="$ROOT_NAME/${mapping_abs#$ROOT_ABS/}" ;;
+    esac
+
+    mapping_summary="$("$SCRIPT_DIR/catalog_mapping_summary.py" "$mapping_file")"
+    control_id="$(printf '%s\n' "$mapping_summary" | sed -n '1p')"
+    reference_count="$(printf '%s\n' "$mapping_summary" | sed -n '2p')"
+    echo "validated mapping.yaml: $display_file"
+    echo "control $control_id is bound to $reference_count framework references"
+  done
+fi
 
 echo "catalog lint OK (${#yamls[@]} files)"
