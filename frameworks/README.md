@@ -1,25 +1,27 @@
 # Framework catalogs
 
-Each family directory under `frameworks/` is the versioned source of truth for a
-compliance framework's controls, rules, and mappings. The agent reads framework
-text from these catalogs — never from an external API at runtime.
+Each family directory under `frameworks/` is the source of truth for versioned
+compliance framework catalogs. The agent reads framework text from these
+catalogs — never from an external API at runtime.
 
 ## Per-family layout
 
-The layout below is delivered by a later ticket (MAT-84). These directories ship
-now as placeholders so that schema and rule work can land without restructuring
-the repository.
+Each family stores catalog content under `versions/<version>/` so a framework
+can evolve without changing loader code or moving stable controls later.
 
 ```
-frameworks/<family>/
-  framework.yaml      # versioned framework metadata (id, version, source URLs)
-  controls/           # one file per control
+frameworks/<family>/versions/<version>/
+  framework.yaml      # framework metadata (id, version, jurisdiction)
+  controls/           # one directory per stable control id
   rules/              # deterministic rules referencing controls
   mappings/           # cross-framework control mappings
 ```
 
-Each family will hold a versioned `framework.yaml`, plus the `controls/`,
-`rules/`, and `mappings/` paths shown above.
+For the GDPR / ePrivacy 2016 catalog, the stable child paths are:
+
+- `frameworks/gdpr-eprivacy/versions/2016/controls/consent.tracker.prior-consent/control.yaml`
+- `frameworks/gdpr-eprivacy/versions/2016/rules/consent.detect-trackers-without-consent-evidence/rule.yaml`
+- `frameworks/gdpr-eprivacy/versions/2016/mappings/consent.tracker.prior-consent/mapping.yaml`
 
 ## Families
 
@@ -30,7 +32,8 @@ Each family will hold a versioned `framework.yaml`, plus the `controls/`,
 | `nis2`          | NIS2                                              |
 | `dora`          | DORA                                              |
 | `ai-act`        | EU AI Act                                         |
-| `custom`        | Internal / customer-specific families             |
+| `internal`      | Shared Sovri-maintained baseline                  |
+| `custom`        | Customer-specific extension point                 |
 
 The framework content and the id naming conventions are not defined here; they
 are delivered by a later ticket (MAT-84).
