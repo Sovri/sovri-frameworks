@@ -4,6 +4,11 @@ set -euo pipefail
 # Runs fully offline with no secrets. Names any missing family.
 ROOT="${1:-frameworks}"
 FAMILIES=(gdpr-eprivacy iso27001 nis2 dora ai-act custom)
+if [ ! -d "$ROOT" ]; then
+  echo "MISSING catalog root: frameworks/"
+  exit 1
+fi
+
 fail=0
 for fam in "${FAMILIES[@]}"; do
   if [ ! -d "$ROOT/$fam" ]; then
