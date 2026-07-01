@@ -8,6 +8,8 @@ ROOT="${1:-frameworks}"
 FAMILIES=(gdpr-eprivacy iso27001 nis2 dora ai-act internal custom)
 # Initial catalog framework versions are legal publication years.
 VERSION_PATTERN='^[0-9]{4}$'
+MAT_114_CONTROL_ID="consent.tracker.prior-consent"
+MAT_114_RULE_ID="consent.detect-trackers-without-consent-evidence"
 if [ ! -d "$ROOT" ]; then
   if [ "$ROOT" = "frameworks" ] && [ -d "farameworks" ]; then
     echo "catalog root must be frameworks/"
@@ -91,6 +93,17 @@ for fam in "${FAMILIES[@]}"; do
   done
 done
 if [ "$fail" -eq 0 ]; then
+  mat_114_root="$ROOT/gdpr-eprivacy/versions/2016"
+  mat_114_control="$mat_114_root/controls/$MAT_114_CONTROL_ID/control.yaml"
+  mat_114_rule="$mat_114_root/rules/$MAT_114_RULE_ID/rule.yaml"
+  mat_114_mapping="$mat_114_root/mappings/$MAT_114_CONTROL_ID/mapping.yaml"
+
+  if [ -f "$mat_114_control" ] && [ -f "$mat_114_rule" ] && [ -f "$mat_114_mapping" ]; then
+    echo "MAT-114 placeholder present"
+    echo "placeholder control id: $MAT_114_CONTROL_ID"
+    echo "placeholder rule id: $MAT_114_RULE_ID"
+  fi
+
   echo "catalog structure OK (${#FAMILIES[@]} families under $ROOT/)"
 else
   exit 1
