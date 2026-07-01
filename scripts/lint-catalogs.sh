@@ -35,6 +35,7 @@ esac
 if [ "$parser" = "python" ]; then
   ROOT_ABS="$(cd "$ROOT" && pwd)"
   ROOT_NAME="$(basename "$ROOT_ABS")"
+  mapping_fail=0
   mapfile -t mappings < <(find "$ROOT_ABS" -path "*/mappings/*/mapping.yaml" -type f | sort)
   for mapping_file in "${mappings[@]}"; do
     mapping_dir="$(cd "$(dirname "$mapping_file")" && pwd)"
@@ -44,12 +45,20 @@ if [ "$parser" = "python" ]; then
     "$ROOT_ABS"/*) display_file="$ROOT_NAME/${mapping_abs#$ROOT_ABS/}" ;;
     esac
 
-    mapping_summary="$("$SCRIPT_DIR/catalog_mapping_summary.py" "$mapping_file")"
+    if ! mapping_summary="$("$SCRIPT_DIR/catalog_mapping_summary.py" "$mapping_file" 2>&1)"; then
+      echo "INVALID mapping.yaml: $display_file"
+      echo "$mapping_summary"
+      mapping_fail=1
+      continue
+    fi
     control_id="$(printf '%s\n' "$mapping_summary" | sed -n '1p')"
     reference_count="$(printf '%s\n' "$mapping_summary" | sed -n '2p')"
     echo "validated mapping.yaml: $display_file"
     echo "control $control_id is bound to $reference_count framework references"
   done
+  if [ "$mapping_fail" -ne 0 ]; then
+    exit 1
+  fi
 fi
 
 echo "catalog lint OK (${#yamls[@]} files)"
