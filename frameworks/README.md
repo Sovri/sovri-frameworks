@@ -23,6 +23,24 @@ For the GDPR / ePrivacy 2016 catalog, the stable child paths are:
 - `frameworks/gdpr-eprivacy/versions/2016/rules/consent.detect-trackers-without-consent-evidence/rule.yaml`
 - `frameworks/gdpr-eprivacy/versions/2016/mappings/consent.tracker.prior-consent/mapping.yaml`
 
+## Adding a framework family
+
+Add a new framework as catalog files under its version root. For example:
+
+- Add family `eu-cyber-resilience-act` version `2024` under
+  `frameworks/eu-cyber-resilience-act/versions/2024/`.
+- Add family `internal-risk-baseline` version `2026` under
+  `frameworks/internal-risk-baseline/versions/2026/`.
+
+For each version root, add:
+
+- `framework.yaml` at the version root.
+- Control files under `controls/<stable-control-id>/control.yaml`.
+- Rule files under `rules/<rule-id>/rule.yaml`.
+- Mapping files under `mappings/<stable-control-id>/mapping.yaml`.
+
+Adding a framework is a catalog-data change only. Engine code does not need a per-framework registration change.
+
 ## Families
 
 | Directory       | Framework family                                  |
