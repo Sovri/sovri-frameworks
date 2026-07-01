@@ -108,7 +108,7 @@ if [ "$fail" -eq 0 ]; then
       break
     done < <(find "$ROOT" -path "*/controls/$MAT_114_CONTROL_ID/control.yaml" -type f)
     if [ -n "$mat_114_other_control" ]; then
-      echo "MAT-114 placeholder must live under frameworks/gdpr-eprivacy/versions/2016/"
+      echo "MAT-114 placeholder must live under frameworks/gdpr-eprivacy/versions/2016/ (expected frameworks/gdpr-eprivacy/versions/2016/controls/$MAT_114_CONTROL_ID/control.yaml)"
       exit 1
     fi
 
