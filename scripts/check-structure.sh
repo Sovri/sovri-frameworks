@@ -53,11 +53,12 @@ for fam in "${FAMILIES[@]}"; do
   fi
 
   metadata_files=()
-  if [ -d "$version_root" ]; then
-    while IFS= read -r -d '' metadata_file; do
+  for version_dir in "${version_dirs[@]}"; do
+    metadata_file="$version_dir/framework.yaml"
+    if [ -f "$metadata_file" ]; then
       metadata_files+=("$metadata_file")
-    done < <(find "$version_root" -mindepth 2 -maxdepth 2 -type f -name 'framework.yaml' -print0)
-  fi
+    fi
+  done
 
   if [ "${#metadata_files[@]}" -eq 0 ]; then
     echo "MISSING framework metadata: $ROOT/$fam/versions/*/framework.yaml"
