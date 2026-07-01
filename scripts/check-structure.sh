@@ -6,6 +6,7 @@ ROOT="${1:-frameworks}"
 # `internal` is the shared Sovri-maintained baseline family; `custom` is the
 # customer-owned extension point.
 FAMILIES=(gdpr-eprivacy iso27001 nis2 dora ai-act internal custom)
+shopt -s nullglob
 if [ ! -d "$ROOT" ]; then
   if [ "$ROOT" = "frameworks" ] && [ -d "farameworks" ]; then
     echo "catalog root must be frameworks/"
@@ -25,7 +26,7 @@ for fam in "${FAMILIES[@]}"; do
   fi
 
   metadata_files=("$ROOT/$fam"/versions/*/framework.yaml)
-  if [ ! -f "${metadata_files[0]}" ]; then
+  if [ "${#metadata_files[@]}" -eq 0 ]; then
     echo "MISSING framework metadata: $ROOT/$fam/versions/<version>/framework.yaml"
     fail=1
     continue
@@ -38,12 +39,8 @@ for fam in "${FAMILIES[@]}"; do
   fi
 
   metadata_file="${metadata_files[0]}"
-  version="$(basename "$(dirname "$metadata_file")")"
-  if [ ! -f "$metadata_file" ]; then
-    echo "MISSING framework metadata: $metadata_file"
-    fail=1
-    continue
-  fi
+  metadata_dir="${metadata_file%/framework.yaml}"
+  version="${metadata_dir##*/}"
 
   echo "accepted framework family $fam version $version"
   echo "framework metadata: $metadata_file"
